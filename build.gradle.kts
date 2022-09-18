@@ -4,10 +4,10 @@ plugins {
     java
     application
     `maven-publish`
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.7.10"
     kotlin("plugin.spring") version "1.4.32"
-    id("org.springframework.boot") version "2.2.6.RELEASE"
-    id("io.spring.dependency-management") version "1.0.9.RELEASE"
+    id("org.springframework.boot") version "2.7.3"
+    id("io.spring.dependency-management") version "1.0.13.RELEASE"
 }
 
 group = "tcp"
@@ -20,8 +20,6 @@ application {
 
 repositories {
     mavenCentral()
-    // maven { url "https://dl.bintray.com/kotlin/ktor" }
-    jcenter()
 }
 
 dependencies {
