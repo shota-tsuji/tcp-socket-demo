@@ -3,25 +3,33 @@ package ktor
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.net.BindException
 import java.net.InetSocketAddress
 import kotlin.test.assertEquals
 
 class EchoTest {
 
-    private val echoServer = EchoServer()
+    companion object {
+        private val echoServer = EchoServer()
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            Thread {
+                echoServer.start()
+            }.start()
+        }
+    }
 
     @Test
     fun serverTest() {
-        GlobalScope.launch {
-            echoServer.start()
-        }
         Thread.sleep(100)
         runBlocking {
             val socket =
@@ -36,11 +44,13 @@ class EchoTest {
 
     @Test
     fun clientTest() {
-        EchoClient().start()
+        assertDoesNotThrow { EchoClient().start() }
     }
 
     @Test
     fun startingTwiceServerCreateBindingExceptionTest() {
+        // Wait for server-setup.
+        Thread.sleep(100)
         assertThrows(BindException::class.java) { EchoServer().start() }
     }
 }
